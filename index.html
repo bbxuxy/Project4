@@ -155,7 +155,7 @@
         function changeLayer(id) { document.querySelectorAll('.page-layer').forEach(l => l.classList.remove('active-layer')); document.getElementById(id).classList.add('active-layer'); }
         function openAdminAuth() { changeLayer('layer-admin-auth'); }
         function closeAdminAuth() { changeLayer('layer-lock'); }
-        function checkAdminPass() { if(document.getElementById('admin-pass-input').value === "011010") { myName="admin"; changeLayer('layer-admin-panel'); } }
+        function checkAdminPass() { if(document.getElementById('admin-pass-input').value === "182137") { myName="admin"; changeLayer('layer-admin-panel'); } }
         function checkInputName() { const v = document.getElementById('p-name').value.trim(); const b = document.getElementById('btn-ready'); b.disabled = v.length < 2; b.style.background = v.length >= 2 ? "var(--primary)" : "#CBD5E0"; }
 
         function registerPlayer() {
