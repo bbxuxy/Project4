@@ -12,9 +12,9 @@
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
         body { font-family: 'Kanit', sans-serif; margin: 0; background: radial-gradient(circle at top right, #E0F7F9, var(--bg)); color: var(--text); height: 100vh; width: 100vw; overflow: hidden; }
         
-        /* Animations & Button Effects */
-        .btn, .sudoku-cell, #pad button { transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); cursor: pointer; }
-        .btn:active, #pad button:active { transform: scale(0.92); box-shadow: inset 0 2px 4px rgba(0,0,0,0.1); }
+        /* ปุ่มยุบ (Button Active Effect) */
+        .btn, .sudoku-cell, #pad button, .btn-sm { transition: all 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275); cursor: pointer; }
+        .btn:active, .btn-sm:active, #pad button:active { transform: scale(0.94); filter: brightness(0.9); }
         
         .page-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; display: none; align-items: center; justify-content: center; padding: 20px; z-index: 10; }
         .active-layer { display: flex !important; z-index: 100 !important; }
@@ -25,39 +25,51 @@
         .btn-danger { background: linear-gradient(135deg, var(--accent), #FF5252); color: white; }
         .btn-warning { background: linear-gradient(135deg, #FFD93D, #F6C90E); color: #2D3436; }
         .btn-outline { background: #F1F3F5; color: #4A5568; }
-        .btn-sm { padding: 6px 10px; font-size: 0.75rem; width: auto; display: inline-block; margin: 2px; border-radius: 8px; }
+        .btn-sm { padding: 8px 12px; font-size: 0.75rem; border-radius: 8px; border: none; font-family: 'Kanit'; font-weight: 500; }
 
         input { width: 100%; padding: 15px; border-radius: 12px; border: 2px solid #EDF2F7; text-align: center; font-family: 'Kanit'; font-size: 1.1rem; margin-bottom: 12px; }
-        .hidden { display: none !important; }
 
-        /* Hint & Banned Animations */
-        @keyframes bulbGlow { 0% { transform: scale(0.8); opacity: 0.5; filter: drop-shadow(0 0 0px yellow); } 50% { transform: scale(1.1); opacity: 1; filter: drop-shadow(0 0 20px yellow); } 100% { transform: scale(1); opacity: 1; } }
-        .hint-icon { font-size: 80px; animation: bulbGlow 0.8s ease-in-out infinite alternate; }
+        /* Animation: หลอดไฟ (Hint) */
+        @keyframes bulbGlow { 0% { transform: scale(0.9); filter: drop-shadow(0 0 5px #FFD93D); } 100% { transform: scale(1.1); filter: drop-shadow(0 0 30px #FFD93D); } }
+        .hint-icon { font-size: 80px; animation: bulbGlow 0.6s ease-in-out infinite alternate; }
         
-        #layer-banned { background: #FF0000 !important; color: white; z-index: 9999 !important; }
-        .banned-card { border: 5px solid white; animation: shake 0.3s infinite; }
-        @keyframes shake { 0% { transform: translate(1px, 1px) rotate(0deg); } 10% { transform: translate(-1px, -2px) rotate(-1deg); } 20% { transform: translate(-3px, 0px) rotate(1deg); } 100% { transform: translate(1px, -1px) rotate(0deg); } }
+        /* Animation: สั่น (Banned) */
+        @keyframes shake { 0%, 100% { transform: translate(0,0); } 10%, 30%, 50%, 70%, 90% { transform: translate(-5px,0); } 20%, 40%, 60%, 80% { transform: translate(5px,0); } }
+        .banned-active { animation: shake 0.4s infinite; border: 4px solid red !important; }
 
-        /* Game Elements */
-        .sudoku-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 20px 0; background: #EDF2F7; padding: 8px; border-radius: 15px; }
-        .sudoku-cell { width: 100%; aspect-ratio: 1; text-align: center; font-size: 1.8rem; border: none; border-radius: 8px; font-weight: bold; color: var(--primary); background: white; }
-        .card-24-num { display: inline-block; width: 60px; height: 60px; line-height: 60px; background: #E0F7F9; color: var(--primary); font-size: 2rem; font-weight: 800; border-radius: 15px; margin: 5px; }
+        /* Animation: ปลดล็อค */
+        @keyframes unlockScale { 0% { transform: scale(0); opacity: 0; } 50% { transform: scale(1.2); opacity: 1; } 100% { transform: scale(5); opacity: 0; } }
+        .unlock-symbol { font-size: 100px; animation: unlockScale 1.2s forwards; color: white; }
+
         table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        td, th { padding: 10px; border-bottom: 1px solid #F1F3F5; text-align: center; }
+        td, th { padding: 12px; border-bottom: 1px solid #F1F3F5; text-align: center; }
+        .rank-badge { background: var(--secondary); padding: 2px 8px; border-radius: 8px; font-weight: 800; }
     </style>
 </head>
 <body>
 
-    <div id="global-admin-btn" style="position:fixed; top:15px; right:15px; z-index:1001; cursor:pointer;" onclick="openAdminAuth()">⚙️</div>
+    <div id="global-admin-btn" style="position:fixed; top:15px; right:15px; z-index:1001; font-size:24px; cursor:pointer;" onclick="openAdminAuth()">⚙️</div>
 
-    <div id="layer-welcome" class="page-layer active-layer"><div class="card"><h1>GAME CENTER</h1><button class="btn btn-primary" onclick="changeLayer('layer-intro')">เริ่มใช้งาน</button></div></div>
+    <div id="layer-welcome" class="page-layer active-layer"><div class="card"><h1 style="color:var(--primary); font-size: 3rem;">GAME CENTER</h1><button class="btn btn-primary" onclick="changeLayer('layer-intro')">เริ่มใช้งาน</button></div></div>
     
-    <div id="layer-intro" class="page-layer"><div class="card"><h2>👥 คณะผู้จัดทำ</h2><p>1. ชัยเมธ 2. ณัฐพงษ์ 3. วิภาดา 4. กานติ์ชนิต 5. ชนิสรา</p><button class="btn btn-primary" onclick="changeLayer('layer-lock')">ถัดไป</button></div></div>
+    <div id="layer-intro" class="page-layer">
+        <div class="card">
+            <h2 style="color:var(--primary);">👥 คณะผู้จัดทำ</h2>
+            <div style="text-align:left; font-size:0.95rem; background:#F8FAFC; padding:20px; border-radius:20px; line-height:1.8;">
+                <b>1. ด.ช.ชัยเมธ เกียรติอมรเวช</b> เลขที่ 2<br>
+                <b>2. ด.ช.ณัฐพงษ์ อังศวาคม</b> เลขที่ 3<br>
+                <b>3. ด.ญ.กานติ์ชนิต ประเสริฐศักดิ์</b> เลขที่ 14<br>
+                <b>4. ด.ญ.ชนิสรา ชะเอม</b> เลขที่ 15<br>
+                <b>5. ด.ญ.วิภาดา ธรรมเจริญ</b> เลขที่ 26
+            </div>
+            <button class="btn btn-primary" onclick="changeLayer('layer-lock')">ถัดไป</button>
+        </div>
+    </div>
 
     <div id="layer-lock" class="page-layer">
         <div class="card">
             <h2>ลงทะเบียน</h2>
-            <div id="lock-content"><input type="text" id="p-name" placeholder="ชื่อเล่น" oninput="checkInputName()"><button id="btn-ready" class="btn btn-primary" onclick="registerPlayer()" disabled>เตรียมพร้อม</button></div>
+            <div id="lock-content"><input type="text" id="p-name" placeholder="ใส่ชื่อเล่นของคุณ" oninput="checkInputName()"><button id="btn-ready" class="btn btn-primary" onclick="registerPlayer()" disabled>เตรียมพร้อม</button></div>
             <div id="ready-status" class="hidden"><h3>⏳ รอแอดมินเริ่มเกม...</h3></div>
         </div>
     </div>
@@ -65,60 +77,60 @@
     <div id="layer-admin-panel" class="page-layer">
         <div class="card">
             <h3>⚙️ Admin Panel</h3>
-            <div style="margin-bottom:10px;">
-                <button class="btn btn-primary btn-sm" onclick="startGame('MATH')">สมการ</button>
-                <button class="btn btn-primary btn-sm" onclick="startGame('SUDOKU')">Sudoku</button>
-                <button class="btn btn-primary btn-sm" onclick="startGame('GAME24')">Game 24</button>
+            <div style="display:flex; gap:5px; margin-bottom:10px;">
+                <button class="btn btn-primary btn-sm" style="flex:1" onclick="startGame('MATH')">สมการ</button>
+                <button class="btn btn-primary btn-sm" style="flex:1; background:#9F7AEA" onclick="startGame('SUDOKU')">Sudoku</button>
+                <button class="btn btn-warning btn-sm" style="flex:1" onclick="startGame('GAME24')">Game 24</button>
             </div>
-            <button class="btn btn-outline" onclick="loadBanList(); changeLayer('layer-ban-list')">🚫 จัดการคน/ส่งเฉลย</button>
-            <button class="btn btn-outline" onclick="changeLayer('layer-scoreboard')">🏆 ดูตารางคะแนน</button>
+            <button class="btn btn-outline" onclick="loadBanList(); changeLayer('layer-ban-list')">🚫 จัดการผู้เล่น / ส่งเฉลย</button>
+            <button class="btn btn-outline" onclick="changeLayer('layer-scoreboard')">🏆 ตารางคะแนน</button>
             <button class="btn btn-outline" onclick="changeLayer('layer-lock')">กลับ</button>
         </div>
     </div>
 
     <div id="layer-ban-list" class="page-layer">
-        <div class="card"><h3>👥 รายชื่อผู้เล่น</h3><div id="ban-table-body" style="max-height:300px; overflow-y:auto; text-align:left;"></div><button class="btn btn-outline" onclick="changeLayer('layer-admin-panel')">กลับ</button></div>
+        <div class="card"><h3>👥 รายชื่อผู้เล่น</h3><div id="ban-table-body" style="max-height:350px; overflow-y:auto; text-align:left;"></div><button class="btn btn-outline" onclick="changeLayer('layer-admin-panel')">กลับ</button></div>
     </div>
 
     <div id="layer-scoreboard" class="page-layer">
-        <div class="card"><h2>🏆 Top 5 Leaderboard</h2><table id="score-table-body"></table><div id="admin-only-back" class="hidden"><button class="btn btn-outline" onclick="changeLayer('layer-admin-panel')">กลับ</button></div><p style="font-size:0.8rem; color:#A0AEC0; margin-top:15px;">รอแอดมินเริ่มเกมถัดไปเพื่อปลดล็อคหน้าจอ</p></div>
-    </div>
-
-    <div id="layer-banned" class="page-layer">
-        <div class="card banned-card">
-            <h1 style="color:red; font-size:3.5rem;">⛔</h1>
-            <h2 style="color:red;">คุณมีพฤติกรรมไม่เหมาะสม</h2>
-            <p style="color:black;"><b>โปรดติดต่อผู้พัฒนา</b></p>
+        <div class="card">
+            <h2 style="margin:0;">🏆 Top 5 Leaderboard</h2>
+            <p style="font-size:0.8rem; color:var(--primary);">อัปเดตอัตโนมัติทุกวินาที</p>
+            <table id="score-table-body"></table>
+            <div id="admin-only-back" class="hidden"><button class="btn btn-outline" onclick="changeLayer('layer-admin-panel')">กลับแผงควบคุม</button></div>
         </div>
     </div>
 
-    <div id="layer-hint" class="page-layer" style="background:rgba(255,255,255,0.9);">
+    <div id="layer-banned" class="page-layer" style="background:#FF0000;">
+        <div class="card banned-active">
+            <h1 style="color:red; font-size:4rem; margin:0;">⛔</h1>
+            <h2 style="color:red;">คุณมีพฤติกรรมไม่เหมาะสม</h2>
+            <p style="font-size:1.1rem;"><b>โปรดติดต่อผู้พัฒนา</b></p>
+        </div>
+    </div>
+
+    <div id="layer-hint" class="page-layer" style="background:rgba(255,255,255,0.95);">
         <div class="card">
             <div class="hint-icon">💡</div>
-            <h2>นี่คือตัวช่วยจากผู้พัฒนา</h2>
-            <p>ระบบกำลังพาคุณไปหน้าถัดไป...</p>
+            <h2 style="color:#F6C90E;">นี่คือตัวช่วยจากผู้พัฒนา</h2>
+            <p>ระบบกำลังนำคุณไปยังหน้าตารางคะแนน...</p>
         </div>
     </div>
 
-    <div id="layer-unlocking" class="page-layer" style="background:var(--primary); color:white;">
-        <div style="font-size:100px; animation: bulbGlow 1s ease-out;">🔓</div>
-    </div>
-
+    <div id="layer-unlocking" class="page-layer" style="background:var(--primary);"><div class="unlock-symbol">🔓</div></div>
     <div id="layer-deleted" class="page-layer" style="background:black; color:white;"><h1>👋 คุณถูกลบออกจากห้อง</h1><button class="btn btn-primary" onclick="location.reload()">เข้าใหม่</button></div>
-    
-    <div id="layer-countdown" class="page-layer" style="background:white;"><div class="card"><h2>READY...</h2><div id="cd-number" style="font-size:5rem; color:var(--primary);">5</div></div></div>
-    <div id="layer-game-math" class="page-layer"><div class="card"><h3>🧮 ภารกิจสมการ</h3><div id="math-questions">1. 2x+3=11 | 2. x-5=2 | 3. 3(x-1)=12 | 4. 10-x=4</div><div id="math-display" style="font-size:2rem; margin:20px; color:var(--primary);">_ _ _ _</div><button class="btn btn-primary" onclick="checkMathHand()">ตกลง</button></div></div>
-    <div id="layer-game-sudoku" class="page-layer"><div class="card"><h3>🧩 SUDOKU</h3><div id="sudoku-container" class="sudoku-grid"></div><button class="btn btn-primary" onclick="finishGame()">ส่ง</button></div></div>
-    <div id="layer-game-24" class="page-layer"><div class="card"><h3>🧮 GAME 24</h3><div id="game-24-display"></div><input type="text" id="game-24-input"><button class="btn btn-warning" onclick="finishGame()">ตรวจ</button></div></div>
+    <div id="layer-countdown" class="page-layer" style="background:white;"><div class="card"><h2>READY...</h2><div id="cd-number" style="font-size:6rem; font-weight:800; color:var(--primary);">5</div></div></div>
 
-    <div id="layer-admin-auth" class="page-layer" style="background:rgba(0,0,0,0.8);"><div class="card"><h3>Admin Access</h3><input type="password" id="admin-pass-input"><button class="btn btn-primary" onclick="checkAdminPass()">Login</button></div></div>
+    <div id="layer-game-math" class="page-layer"><div class="card"><h3>🧮 ภารกิจสมการ</h3><div id="math-display" style="font-size:2.5rem; margin:20px; color:var(--primary); letter-spacing:5px;">_ _ _ _</div><p>รอแอดมินส่งตัวช่วยหรือแก้ด้วยตัวเอง</p><button class="btn btn-primary" onclick="finishGame()">ส่งคำตอบ</button></div></div>
+
+    <div id="layer-admin-auth" class="page-layer" style="background:rgba(0,0,0,0.8);"><div class="card"><h3>🔐 Admin Access</h3><input type="password" id="admin-pass-input" placeholder="รหัสผ่าน"><button class="btn btn-primary" onclick="checkAdminPass()">เข้าสู่ระบบ</button></div></div>
 
     <script>
         const firebaseConfig = { apiKey: "AIzaSyDJf-qOOB_hmP1higooEpMSFe2768dMxfE", databaseURL: "https://mathpasswordgame2-default-rtdb.asia-southeast1.firebasedatabase.app/" };
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        let myName = "", currentLayer = "layer-welcome", isBanned = false, gameStartTime = 0;
+        let myName = "", currentLayer = "layer-welcome", isBanned = false, lastLayerBeforeBan = "layer-lock";
         let scoreInterval = null;
 
         function changeLayer(id) {
@@ -127,7 +139,7 @@
                 document.getElementById(id).classList.add('active-layer');
                 return;
             }
-            currentLayer = id;
+            lastLayerBeforeBan = id;
             document.querySelectorAll('.page-layer').forEach(l => l.classList.remove('active-layer'));
             document.getElementById(id).classList.add('active-layer');
             
@@ -140,12 +152,12 @@
         function playBannedSound() {
             try {
                 const context = new (window.AudioContext || window.webkitAudioContext)();
-                const oscillator = context.createOscillator();
+                const osc = context.createOscillator();
                 const gain = context.createGain();
-                oscillator.type = 'square'; oscillator.frequency.setValueAtTime(900, context.currentTime);
-                oscillator.connect(gain); gain.connect(context.destination);
-                oscillator.start(); gain.gain.exponentialRampToValueAtTime(0.0001, context.currentTime + 5);
-                setTimeout(() => oscillator.stop(), 5000);
+                osc.type = 'square'; osc.frequency.setValueAtTime(880, context.currentTime);
+                osc.connect(gain); gain.connect(context.destination);
+                osc.start(); gain.gain.exponentialRampToValueAtTime(0.0001, context.currentTime + 5);
+                setTimeout(() => osc.stop(), 5000);
             } catch(e) {}
         }
 
@@ -156,50 +168,48 @@
             db.ref('players/' + myName).on('value', s => {
                 const p = s.val(); if(!p) { changeLayer('layer-deleted'); return; }
 
-                // Check Ban Status
+                // ระบบแบน
                 if(p.banned && !isBanned) { isBanned = true; playBannedSound(); changeLayer('layer-banned'); }
                 else if(!p.banned && isBanned) { 
                     isBanned = false; changeLayer('layer-unlocking'); 
-                    setTimeout(() => changeLayer(currentLayer), 1500); 
+                    setTimeout(() => changeLayer(lastLayerBeforeBan), 1200); 
                 }
 
-                // Check Hint Trigger
+                // ระบบเฉลย (Hint)
                 if(p.hint_trigger && (Date.now() - p.hint_trigger < 3000)) {
                     db.ref('players/' + myName).update({ hint_trigger: 0 });
                     changeLayer('layer-hint');
                     setTimeout(finishGame, 2000);
                 }
 
-                if(p.status === 'finished' && currentLayer !== 'layer-scoreboard') changeLayer('layer-scoreboard');
-                if(p.status === 'playing' && currentLayer === 'layer-scoreboard') changeLayer('layer-lock'); // Reset if new game starts
+                if(p.status === 'finished' && lastLayerBeforeBan !== 'layer-scoreboard') changeLayer('layer-scoreboard');
             });
             document.getElementById('lock-content').classList.add('hidden');
             document.getElementById('ready-status').classList.remove('hidden');
         }
 
-        // --- Admin Functions ---
         function loadBanList() {
             db.ref('players').on('value', s => {
                 const con = document.getElementById('ban-table-body'); con.innerHTML = "";
                 s.forEach(c => {
                     if(c.key === 'admin') return;
                     const p = c.val();
-                    con.innerHTML += `<div style="display:flex; justify-content:space-between; align-items:center; padding:8px; border-bottom:1px solid #eee;">
-                        <span style="font-weight:bold;">${p.name}</span>
-                        <div>
+                    con.innerHTML += `<div style="display:flex; justify-content:space-between; align-items:center; padding:12px; border-bottom:1px solid #eee;">
+                        <span><b>${p.name}</b></span>
+                        <div style="display:flex; gap:5px;">
                             <button class="btn-sm btn-warning" onclick="sendHint('${p.name}')">⚡ เฉลย</button>
-                            <button class="btn-sm" style="color:${p.banned?'green':'red'}" onclick="toggleBan('${p.name}', ${p.banned})">${p.banned?'ปลดแบน':'แบน'}</button>
+                            <button class="btn-sm" style="background:${p.banned?'#00D2BE':'#FF6B6B'}; color:white;" onclick="toggleBan('${p.name}', ${p.banned})">${p.banned?'ปลด':'แบน'}</button>
                             <button class="btn-sm" style="background:black; color:white;" onclick="deletePlayer('${p.name}')">ลบ</button>
                         </div>
                     </div>`;
                 });
             });
         }
+
         function toggleBan(t, s) { db.ref('players/' + t).update({ banned: !s }); }
         function deletePlayer(t) { if(confirm('ลบผู้เล่น '+t+'?')) db.ref('players/'+t).remove(); }
         function sendHint(t) { db.ref('players/' + t).update({ hint_trigger: Date.now() }); }
 
-        // --- Game System ---
         function startGame(type) { 
             db.ref('players').once('value', s => {
                 s.forEach(c => { if(c.key !== 'admin') db.ref('players/'+c.key).update({status:'ready', finishTime:0, startTime:0}); });
@@ -213,16 +223,11 @@
                 changeLayer('layer-countdown'); let c=5;
                 let t = setInterval(() => {
                     c--; document.getElementById('cd-number').innerText=c;
-                    if(c<=0) { 
-                        clearInterval(t); gameStartTime = Date.now();
-                        if(myName !== 'admin') db.ref('players/'+myName).update({startTime: gameStartTime, status: 'playing'});
-                        changeLayer(d.type === 'MATH' ? 'layer-game-math' : (d.type === 'SUDOKU' ? 'layer-game-sudoku' : 'layer-game-24'));
-                    }
+                    if(c<=0) { clearInterval(t); if(myName !== 'admin') db.ref('players/'+myName).update({startTime: Date.now(), status: 'playing'}); changeLayer('layer-game-math'); }
                 }, 1000);
             }
         });
 
-        function checkMathHand() { alert("กรุณาใช้ความสามารถตนเอง หรือรอเฉลยจากแอดมิน"); }
         function finishGame() { db.ref('players/'+myName).update({finishTime: Date.now(), status: 'finished'}); changeLayer('layer-scoreboard'); }
 
         function updateLeaderboard() {
@@ -231,8 +236,8 @@
                 s.forEach(c => { if(c.key !== 'admin' && c.val().finishTime) pList.push({name: c.key, time: (c.val().finishTime - c.val().startTime)/1000}); });
                 pList.sort((a,b) => a.time - b.time);
                 let h = `<tr><th>อันดับ</th><th>ชื่อ</th><th>เวลา</th></tr>`;
-                pList.slice(0,5).forEach((p, i) => h += `<tr><td>${i+1}</td><td><b>${p.name}</b></td><td style="color:red">${p.time.toFixed(2)}s</td></tr>`);
-                document.getElementById('score-table-body').innerHTML = h || "<tr><td colspan='3'>รอนักแข่งจบการแข่งขัน...</td></tr>";
+                pList.slice(0,5).forEach((p, i) => h += `<tr><td><span class="rank-badge">${i+1}</span></td><td><b>${p.name}</b></td><td style="color:red; font-weight:800;">${p.time.toFixed(2)}s</td></tr>`);
+                document.getElementById('score-table-body').innerHTML = h || "<tr><td colspan='3'>รอนักแข่ง...</td></tr>";
             });
         }
 
