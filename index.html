@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>GAME CENTER - FINAL ELITE</title>
+    <title>MATH CODE M.1 - INFINITE EDITION</title>
     <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-database-compat.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #00D2BE; --bg: #F0F4F8; --card-bg: #FFFFFF; --error: #FF6B6B; }
+        :root { --primary: #00D2BE; --bg: #F0F4F8; --card-bg: #FFFFFF; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
         body { font-family: 'Kanit', sans-serif; margin: 0; background: var(--bg); height: 100vh; overflow: hidden; }
         
@@ -29,10 +29,9 @@
         
         .feedback-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: 40px; display: none; align-items: center; justify-content: center; font-size: 6rem; z-index: 110; background: rgba(255,255,255,0.9); }
         
-        /* Ban Layer Style */
         #layer-banned { background: #FF0000 !important; z-index: 9999 !important; }
         .shake { animation: shake 0.3s infinite; }
-        @keyframes shake { 0% { transform: translate(1px, 1px); } 50% { transform: translate(-2px, -1px); } 100% { transform: translate(1px, 1px); } }
+        @keyframes shake { 0%, 100% { transform: translate(0,0); } 25% { transform: translate(-2px,2px); } 75% { transform: translate(2px,-2px); } }
     </style>
 </head>
 <body>
@@ -41,22 +40,20 @@
 
     <div id="layer-welcome" class="page-layer active-layer">
         <div class="card">
-            <h1 style="color:var(--primary)">MATH CODE</h1>
-            <div style="text-align:left; font-size:0.85rem; background:#F8FAFC; padding:15px; border-radius:25px; margin-bottom:20px;">
-                1. ด.ช.ชัยเมธ เกียรติอมรเวช เลขที่ 2 | 2. ด.ช.ณัฐพงษ์ อังศวาคม เลขที่ 3<br>
-                3. ด.ญ.กานติ์ชนิต ประเสริฐศักดิ์ เลขที่ 14 | 4. ด.ญ.ชนิสรา ชะเอม เลขที่ 15<br>
-                5. ด.ญ.วิภาดา ธรรมเจริญ เลขที่ 26
+            <h1 style="color:var(--primary)">MATH CODE M.1</h1>
+            <div style="text-align:left; font-size:0.85rem; background:#F8FAFC; padding:15px; border-radius:25px; margin-bottom:20px; line-height:1.6;">
+                <b>ผู้จัดทำ:</b> ชัยเมธ (2), ณัฐพงษ์ (3), กานติ์ชนิต (14), ชนิสรา (15), วิภาดา (26)
             </div>
-            <button class="btn btn-primary" onclick="changeLayer('layer-lock')">ถัดไป</button>
+            <button class="btn btn-primary" onclick="changeLayer('layer-lock')">เข้าสู่สนามสอบ</button>
         </div>
     </div>
 
     <div id="layer-lock" class="page-layer">
-        <div class="card"><h2>ลงทะเบียน</h2><input type="text" id="p-name" placeholder="ชื่อเล่นของคุณ"><button class="btn btn-primary" onclick="registerPlayer()">เตรียมพร้อม</button></div>
+        <div class="card"><h2>ชื่อของคุณ</h2><input type="text" id="p-name" placeholder="ชื่อเล่น"><button class="btn btn-primary" onclick="registerPlayer()">พร้อมแล้ว!</button></div>
     </div>
 
     <div id="layer-lobby" class="page-layer">
-        <div class="card"><h3>⏳ รอแอดมินเริ่มเกม</h3><div id="lobby-list" style="margin: 20px 0; max-height: 200px; overflow-y: auto;"></div></div>
+        <div class="card"><h3>⏳ กำลังรอแอดมินปล่อยโจทย์...</h3><div id="lobby-list" style="margin: 20px 0;"></div></div>
     </div>
 
     <div id="layer-countdown" class="page-layer" style="background:white;"><div style="font-size:10rem; color:var(--primary); font-weight:800;" id="cd-text">5</div></div>
@@ -65,8 +62,8 @@
         <div class="card">
             <div id="feedback-correct" class="feedback-overlay" style="color:#00D2BE;">✅</div>
             <div id="feedback-wrong" class="feedback-overlay" style="color:#FF6B6B;">❌</div>
-            <div id="quest-container" style="background:#F0FDFA; padding:15px; border-radius:25px; border:2px dashed var(--primary); margin-bottom:10px; font-size: 0.9rem; text-align: left;"></div>
-            <div id="code-display" style="font-size:3rem; color:var(--primary); font-weight:800; letter-spacing:8px;">____</div>
+            <div id="quest-area" style="background:#F0FDFA; padding:15px; border-radius:25px; border:2px dashed var(--primary); margin-bottom:10px; font-size: 1.1rem; text-align: left;"></div>
+            <div id="code-display" style="font-size:3rem; color:var(--primary); font-weight:800; letter-spacing:10px;">____</div>
             <div class="keypad">
                 <button class="key" onclick="press('1')">1</button><button class="key" onclick="press('2')">2</button><button class="key" onclick="press('3')">3</button>
                 <button class="key" onclick="press('4')">4</button><button class="key" onclick="press('5')">5</button><button class="key" onclick="press('6')">6</button>
@@ -76,33 +73,17 @@
         </div>
     </div>
 
-    <div id="layer-admin" class="page-layer">
-        <div class="card"><h2>⚙️ Admin Control</h2>
-            <div style="display:flex; gap:10px; margin-bottom:10px;"><button class="btn btn-primary" onclick="adminTrigger()">เริ่มสมการ</button><button class="btn btn-primary" style="background:#9F7AEA" onclick="adminTrigger()">Sudoku</button></div>
-            <button class="btn btn-primary" style="background:black" onclick="loadAdminManage()">จัดการผู้เล่น & เฉลย</button>
-            <button class="btn btn-primary" style="background:gray" onclick="changeLayer('layer-welcome')">กลับ</button>
-        </div>
-    </div>
-
-    <div id="layer-manage" class="page-layer">
-        <div class="card">
-            <div id="manage-feedback" class="feedback-overlay"></div>
-            <h3>👥 จัดการผู้แข่งขัน</h3>
-            <div id="manage-box" style="text-align:left; max-height:300px; overflow-y:auto; margin-bottom:15px;"></div>
-            <button class="btn btn-primary" onclick="changeLayer('layer-admin')">กลับ</button>
-        </div>
-    </div>
-
-    <div id="layer-scoreboard" class="page-layer"><div class="card"><h2>🏆 คะแนน</h2><div id="score-box"></div><button class="btn btn-primary" onclick="location.reload()">จบเกม</button></div></div>
-    <div id="layer-banned" class="page-layer"><div class="card shake" style="border:5px solid white;"><h1 style="color:red; font-size:5rem;">⛔</h1><h2>ถูกระงับการใช้งาน</h2><p>โปรดติดต่อผู้พัฒนา</p></div></div>
-    <div id="layer-unlocking" class="page-layer" style="background:var(--primary);"><div style="font-size:100px; color:white;">🔓</div></div>
+    <div id="layer-admin" class="page-layer"><div class="card"><h2>⚙️ Admin Control</h2><button class="btn btn-primary" onclick="adminTrigger()">เริ่มการแข่ง</button><button class="btn btn-primary" style="background:black" onclick="loadAdminManage()">รายชื่อ & แบน & เฉลย</button><button class="btn btn-primary" style="background:gray" onclick="changeLayer('layer-welcome')">ออก</button></div></div>
+    <div id="layer-manage" class="page-layer"><div class="card"><div id="admin-notif" class="feedback-overlay"></div><h3>👥 ผู้เข้าแข่งขัน</h3><div id="manage-box" style="text-align:left; max-height:300px; overflow-y:auto;"></div><button class="btn btn-primary" onclick="changeLayer('layer-admin')">กลับ</button></div></div>
+    <div id="layer-scoreboard" class="page-layer"><div class="card"><h2>🏆 ลำดับคะแนน</h2><div id="score-box"></div><button class="btn btn-primary" onclick="location.reload()">เริ่มใหม่</button></div></div>
+    <div id="layer-banned" class="page-layer"><div class="card shake" style="border:5px solid white;"><h1 style="color:red; font-size:5rem;">⛔</h1><h2>ถูกแบนจากการแข่ง</h2></div></div>
 
     <script>
         const firebaseConfig = { apiKey: "AIzaSyDJf-qOOB_hmP1higooEpMSFe2768dMxfE", databaseURL: "https://mathpasswordgame2-default-rtdb.asia-southeast1.firebasedatabase.app/" };
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        let myName = "", currentCode = "", targetAns = "", isBanned = false, isStarted = false;
+        let myName = "", currentCode = "", targetAns = "", isBanned = false, gameRun = false;
 
         function changeLayer(id) {
             document.querySelectorAll('.page-layer').forEach(l => l.classList.remove('active-layer'));
@@ -110,7 +91,7 @@
         }
 
         const audio = {
-            whistle: () => { let c=new AudioContext(); let o=c.createOscillator(); o.type='sine'; o.frequency.setValueAtTime(1500,c.currentTime); o.connect(c.destination); o.start(); o.stop(c.currentTime+0.4); },
+            whistle: () => { let c=new AudioContext(); let o=c.createOscillator(); o.frequency.setValueAtTime(1500,c.currentTime); o.connect(c.destination); o.start(); o.stop(c.currentTime+0.4); },
             wrong: () => { let c=new AudioContext(); let o=c.createOscillator(); o.type='sawtooth'; o.frequency.setValueAtTime(120,c.currentTime); o.connect(c.destination); o.start(); o.stop(c.currentTime+0.3); }
         };
 
@@ -123,12 +104,9 @@
             
             db.ref('players/'+myName).on('value', s => {
                 const p = s.val(); if(!p) return;
-                // ระบบแบน (Fixed)
                 if(p.banned && !isBanned) { isBanned=true; changeLayer('layer-banned'); }
-                else if(!p.banned && isBanned) { isBanned=false; changeLayer('layer-unlocking'); setTimeout(()=>changeLayer('layer-lobby'), 1500); }
-                // ระบบเริ่มเกม
-                if(p.status === 'countdown' && !isStarted) { isStarted=true; startCountdown(); }
-                // ระบบเฉลย (Hint)
+                else if(!p.banned && isBanned) { isBanned=false; changeLayer('layer-lobby'); }
+                if(p.status === 'countdown' && !gameRun) { gameRun=true; startCountdown(); }
                 if(p.hint) {
                     db.ref('players/'+myName).update({hint: false, status: 'finished', finishTime: Date.now(), startTime: Date.now()-5000});
                     changeLayer('layer-scoreboard'); updateScores();
@@ -141,19 +119,38 @@
             let c = 5;
             let i = setInterval(() => {
                 c--; document.getElementById('cd-text').innerText = c;
-                if(c <= 0) { clearInterval(i); audio.whistle(); generate4Equations(); changeLayer('layer-game-math'); db.ref('players/'+myName).update({startTime: Date.now(), status: 'playing'}); }
+                if(c <= 0) { clearInterval(i); audio.whistle(); generateM1Equations(); changeLayer('layer-game-math'); db.ref('players/'+myName).update({startTime: Date.now(), status: 'playing'}); }
             }, 1000);
         }
 
-        function generate4Equations() {
+        // --- ระบบสุ่มสมการ ม.1 ไม่ซ้ำกัน (Infinite) ---
+        function generateM1Equations() {
             let res = ""; let html = "";
-            ['a','b','c','d'].forEach(v => {
-                let val = Math.floor(Math.random()*10); // 0-9
-                res += val;
-                html += `<div>${v}: ${val*2} / 2 = ?</div>`;
+            const vars = ['a','b','c','d'];
+            vars.forEach(v => {
+                const answer = Math.floor(Math.random()*10); // 0-9
+                res += answer;
+                
+                // สุ่มรูปแบบสมการ ม.1 (3 รูปแบบหลัก)
+                const type = Math.floor(Math.random()*3);
+                let eq = "";
+                if(type === 0) { // ax + b = c
+                    let a = Math.floor(Math.random()*5)+2;
+                    let b = Math.floor(Math.random()*20)+1;
+                    eq = `${a}${v} + ${b} = ${a*answer+b}`;
+                } else if(type === 1) { // ax - b = c
+                    let a = Math.floor(Math.random()*5)+2;
+                    let b = Math.floor(Math.random()*15)+1;
+                    eq = `${a}${v} - ${b} = ${a*answer-b}`;
+                } else { // x/a + b = c
+                    let a = Math.floor(Math.random()*3)+2;
+                    let b = Math.floor(Math.random()*10)+1;
+                    eq = `${v}/${a} + ${b} = ${answer/a+b}`;
+                }
+                html += `<div style="margin-bottom:5px;"><b>สมการที่ ${v.toUpperCase()}:</b> ${eq}</div>`;
             });
             targetAns = res;
-            document.getElementById('quest-container').innerHTML = html + "<b>รหัสคือเรียงตัวแปร a b c d</b>";
+            document.getElementById('quest-area').innerHTML = html + "<center><small>เรียงค่า a b c d เป็นรหัสผ่าน</small></center>";
         }
 
         function press(k) {
@@ -173,7 +170,6 @@
             }
         }
 
-        // --- Admin Logic ---
         function adminTrigger() {
             db.ref('players').once('value', s => { s.forEach(c => { if(c.key!=='admin') db.ref('players/'+c.key).update({status:'countdown'}); }); });
         }
@@ -185,11 +181,11 @@
                 s.forEach(c => {
                     if(c.key === 'admin') return;
                     let p = c.val();
-                    h += `<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; border-bottom:1px solid #eee; padding:10px;">
-                        <b>${p.name} (${p.status})</b>
+                    h += `<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; border-bottom:1px solid #eee; padding:5px;">
+                        <span>${p.name}</span>
                         <div>
-                            <button onclick="giveHint('${p.name}', '${p.status}')" style="background:#FFD93D; border:none; padding:8px; border-radius:10px;">⚡</button>
-                            <button onclick="db.ref('players/${p.name}').update({banned:${!p.banned}})" style="background:${p.banned?'#00D2BE':'#FF6B6B'}; color:white; border:none; padding:8px; border-radius:10px; margin-left:5px;">${p.banned?'ปลด':'แบน'}</button>
+                            <button onclick="giveHint('${p.name}', '${p.status}')" style="background:#FFD93D; padding:8px; border-radius:10px;">⚡</button>
+                            <button onclick="db.ref('players/${p.name}').update({banned:${!p.banned}})" style="background:${p.banned?'#00D2BE':'#FF6B6B'}; color:white; padding:8px; border-radius:10px; margin-left:5px;">${p.banned?'ปลด':'แบน'}</button>
                         </div>
                     </div>`;
                 });
@@ -198,19 +194,19 @@
         }
 
         function giveHint(name, status) {
-            const fb = document.getElementById('manage-feedback');
+            const fb = document.getElementById('admin-notif');
             if(status === 'playing') {
                 db.ref('players/'+name).update({hint: true});
-                fb.innerHTML = "✅"; fb.style.display = "flex"; fb.style.color = "#00D2BE";
+                fb.innerHTML = "✅"; fb.style.display = "flex"; fb.style.color = "green";
             } else {
-                fb.innerHTML = "❌"; fb.style.display = "flex"; fb.style.color = "#FF6B6B";
+                fb.innerHTML = "❌"; fb.style.display = "flex"; fb.style.color = "red";
             }
             setTimeout(() => fb.style.display = "none", 1000);
         }
 
         function updateLobby() {
             db.ref('players').once('value', s => {
-                let h = ""; s.forEach(c => { if(c.key!=='admin') h+=`<div style="padding:8px; background:white; border-radius:15px; margin-bottom:5px; box-shadow:0 2px 5px rgba(0,0,0,0.05);">🟢 ${c.val().name}</div>`; });
+                let h = ""; s.forEach(c => { if(c.key!=='admin') h+=`<div>● ${c.val().name}</div>`; });
                 document.getElementById('lobby-list').innerHTML = h;
             });
         }
@@ -219,12 +215,12 @@
             db.ref('players').once('value', s => {
                 let list = []; s.forEach(c => { if(c.val().finishTime) list.push(c.val()); });
                 list.sort((a,b) => (a.finishTime-a.startTime) - (b.finishTime-b.startTime));
-                let h = ""; list.forEach((p,i) => h += `<div style="margin:10px; font-weight:600;">${i+1}. ${p.name} - ${((p.finishTime-p.startTime)/1000).toFixed(2)}s</div>`);
+                let h = ""; list.forEach((p,i) => h += `<div style="padding:10px; border-bottom:1px solid #eee;">${i+1}. ${p.name} - ${((p.finishTime-p.startTime)/1000).toFixed(2)}s</div>`);
                 document.getElementById('score-box').innerHTML = h;
             });
         }
 
-        function openAdminAuth() { if(prompt("Pass:") === "182137") { myName="admin"; changeLayer('layer-admin'); } }
+        function openAdminAuth() { if(prompt("รหัส:") === "182137") { myName="admin"; changeLayer('layer-admin'); } }
     </script>
 </body>
 </html>
