@@ -3,17 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MATH CODE M.1 - FINAL LOCKDOWN</title>
+    <title>MATH CODE M.1 - PRECISION TIMER</title>
     <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-database-compat.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #00D2BE; --bg: #F0F4F8; --card-bg: #FFFFFF; --error: #FF6B6B; }
+        :root { --primary: #00D2BE; --bg: #F0F4F8; --card-bg: #FFFFFF; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
         body { font-family: 'Kanit', sans-serif; margin: 0; background: var(--bg); height: 100vh; overflow: hidden; }
         
         .btn, .key, .admin-gear { transition: transform 0.1s; cursor: pointer; border: none; border-radius: 20px; }
-        .btn:active, .key:active, .admin-gear:active { transform: scale(0.93); }
+        .btn:active, .key:active { transform: scale(0.93); }
         
         input { width: 100%; padding: 18px; border-radius: 35px; border: 2px solid #E2E8F0; text-align: center; font-family: 'Kanit'; margin-bottom: 20px; font-size: 1.1rem; }
 
@@ -24,12 +24,12 @@
         .btn-primary { background: linear-gradient(135deg, var(--primary), #00BFA5); color: white; padding: 15px; width: 100%; font-weight: 600; margin-top: 10px; border-radius: 25px; }
         .admin-gear { position: fixed; top: 20px; right: 20px; background: white; width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); z-index: 1001; }
 
-        .keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 15px; }
+        #live-timer { font-size: 1.5rem; color: #FF6B6B; font-weight: 700; margin-bottom: 10px; }
+        .keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 10px; }
         .key { background: #F8FAFC; padding: 18px; font-size: 1.5rem; font-weight: 600; box-shadow: 0 4px 0 #CBD5E1; border-radius: 20px; }
         
         .feedback-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: 40px; display: none; align-items: center; justify-content: center; font-size: 6rem; z-index: 110; background: rgba(255,255,255,0.9); }
-        
-        .list-box { text-align: left; max-height: 280px; overflow-y: auto; margin: 15px 0; padding: 10px; border-radius: 20px; background: #F8FAFC; }
+        .list-box { text-align: left; max-height: 280px; overflow-y: auto; margin: 15px 0; padding: 10px; border-radius: 20px; background: #F8FAFC; border: 1px solid #E2E8F0; }
         #layer-banned { background: #FF0000 !important; color: white; z-index: 9999 !important; }
     </style>
 </head>
@@ -57,13 +57,14 @@
     </div>
 
     <div id="layer-lobby" class="page-layer">
-        <div class="card"><h3>⏳ รอแอดมินปล่อยโจทย์...</h3><div id="lobby-list" class="list-box"></div></div>
+        <div class="card"><h3>⏳ รอแอดมินเริ่มเกม...</h3><div id="lobby-list" class="list-box"></div></div>
     </div>
 
     <div id="layer-countdown" class="page-layer" style="background:white;"><div style="font-size:10rem; color:var(--primary); font-weight:800;" id="cd-text">5</div></div>
 
     <div id="layer-game-math" class="page-layer">
         <div class="card">
+            <div id="live-timer">0.00s</div>
             <div id="feedback-correct" class="feedback-overlay" style="color:#00D2BE;">✅</div>
             <div id="feedback-wrong" class="feedback-overlay" style="color:#FF6B6B;">❌</div>
             <div id="quest-area" style="background:#F0FDFA; padding:15px; border-radius:25px; border:2px dashed var(--primary); margin-bottom:10px; font-size: 0.95rem; text-align: left;"></div>
@@ -79,9 +80,9 @@
 
     <div id="layer-scoreboard" class="page-layer">
         <div class="card">
-            <h2 style="color:var(--primary)">🏆 อันดับการแข่งขัน</h2>
-            <p style="font-size:0.8rem; color:gray;">(ระบบล็อคหน้านี้เพื่อสรุปผล - อัปเดตทุก 1s)</p>
+            <h2 style="color:var(--primary)">🏆 ลำดับคะแนนสด</h2>
             <div id="score-box" class="list-box" style="max-height:350px;"></div>
+            <p style="font-size:0.75rem; color:gray;">ระบบล็อคหน้านี้เพื่อความยุติธรรม</p>
         </div>
     </div>
 
@@ -92,14 +93,14 @@
                 <button class="btn btn-primary" onclick="adminTrigger()">เริ่มสมการ</button>
                 <button class="btn btn-primary" style="background:#9F7AEA" onclick="adminTrigger()">เริ่ม SUDOKU</button>
             </div>
-            <button class="btn btn-primary" style="background:#6366F1" onclick="startAdminScore()">📊 ดูคะแนนสด (1s)</button>
-            <button class="btn btn-primary" style="background:black" onclick="loadAdminManage()">จัดการ & แบน & เฉลย</button>
-            <button class="btn btn-primary" style="background:gray" onclick="location.reload()">Reset ระบบทั้งหมด</button>
+            <button class="btn btn-primary" style="background:#6366F1" onclick="startAdminScore()">📊 ดูอันดับผู้ชนะ</button>
+            <button class="btn btn-primary" style="background:black" onclick="loadAdminManage()">จัดการผู้เล่น & แบน</button>
+            <button class="btn btn-primary" style="background:gray" onclick="location.reload()">ล้างระบบเริ่มใหม่</button>
         </div>
     </div>
 
     <div id="layer-manage" class="page-layer"><div class="card"><div id="admin-notif" class="feedback-overlay"></div><h3>👥 รายชื่อ & คำสั่ง</h3><div id="manage-box" class="list-box"></div><button class="btn btn-primary" onclick="changeLayer('layer-admin')">กลับ</button></div></div>
-    <div id="layer-banned" class="page-layer"><div class="card" style="border:5px solid white;"><h1 style="color:red; font-size:5rem;">⛔</h1><h2 style="color:red">คุณถูกระงับสิทธิ์</h2><p style="color:black">โปรดติดต่อแอดมินเพื่อปลดแบน</p></div></div>
+    <div id="layer-banned" class="page-layer"><div class="card"><h1>⛔</h1><h2 style="color:red">ถูกระงับสิทธิ์</h2><p>โปรดแจ้งแอดมินเพื่อปลดแบน</p></div></div>
 
     <script>
         const firebaseConfig = { apiKey: "AIzaSyDJf-qOOB_hmP1higooEpMSFe2768dMxfE", databaseURL: "https://mathpasswordgame2-default-rtdb.asia-southeast1.firebasedatabase.app/" };
@@ -107,6 +108,7 @@
         const db = firebase.database();
 
         let myName = "", currentCode = "", targetAns = "", isBanned = false, gameRun = false;
+        let startTime = 0, timerInterval = null;
 
         function changeLayer(id) {
             document.querySelectorAll('.page-layer').forEach(l => l.classList.remove('active-layer'));
@@ -120,21 +122,20 @@
             changeLayer('layer-lobby');
             setInterval(updateLobby, 1000);
             
-            // Real-time Status Listener (แก้ไขปลดแบนไม่ได้)
             db.ref('players/'+myName).on('value', s => {
                 const p = s.val(); if(!p) return;
-                
-                // ระบบแบนแบบ Real-time
+                // ปลดแบน/แบน
                 if(p.banned) { isBanned=true; changeLayer('layer-banned'); }
                 else if(!p.banned && isBanned) { isBanned=false; changeLayer('layer-lobby'); }
-
-                // ระบบเริ่มเกม
+                // เริ่มเกม
                 if(p.status === 'countdown' && !gameRun) { gameRun=true; startCountdown(); }
-                
-                // ระบบล็อคหน้าคะแนน & เฉลย
+                // เฉลย/ชนะ
                 if(p.hint || p.status === 'finished') {
-                    if(p.hint) db.ref('players/'+myName).update({hint: false, status: 'finished', finishTime: Date.now(), startTime: Date.now()-2000});
-                    changeLayer('layer-scoreboard');
+                    if(p.hint) {
+                        const fakeTime = Date.now() - 2000;
+                        db.ref('players/'+myName).update({hint: false, status: 'finished', finishTime: fakeTime, timeUsed: 2.00});
+                    }
+                    stopTimer(); changeLayer('layer-scoreboard');
                     if(!window.scoreSync) window.scoreSync = setInterval(() => updateScores('score-box'), 1000);
                 }
             });
@@ -145,8 +146,27 @@
             let c = 5;
             let i = setInterval(() => {
                 c--; document.getElementById('cd-text').innerText = c;
-                if(c <= 0) { clearInterval(i); generateM1Equations(); changeLayer('layer-game-math'); db.ref('players/'+myName).update({startTime: Date.now(), status: 'playing'}); }
+                if(c <= 0) { 
+                    clearInterval(i); 
+                    generateM1Equations(); 
+                    changeLayer('layer-game-math'); 
+                    startTime = Date.now();
+                    startTimer();
+                    db.ref('players/'+myName).update({status: 'playing'}); 
+                }
             }, 1000);
+        }
+
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                const now = Date.now();
+                const diff = (now - startTime) / 1000;
+                document.getElementById('live-timer').innerText = diff.toFixed(2) + "s";
+            }, 50);
+        }
+
+        function stopTimer() {
+            clearInterval(timerInterval);
         }
 
         function generateM1Equations() {
@@ -169,15 +189,18 @@
 
         function checkAns() {
             if(currentCode === targetAns) {
+                const finalTime = (Date.now() - startTime) / 1000;
                 document.getElementById('feedback-correct').style.display='flex';
-                setTimeout(() => { db.ref('players/'+myName).update({status:'finished', finishTime: Date.now()}); }, 1000);
+                setTimeout(() => { 
+                    db.ref('players/'+myName).update({status:'finished', finishTime: Date.now(), timeUsed: finalTime}); 
+                }, 800);
             } else {
                 document.getElementById('feedback-wrong').style.display='flex';
                 setTimeout(() => { document.getElementById('feedback-wrong').style.display='none'; currentCode=""; press(''); }, 1000);
             }
         }
 
-        // --- ADMIN FUNCTIONS ---
+        // --- ADMIN ---
         function adminTrigger() {
             db.ref('players').once('value', s => { s.forEach(c => { if(c.key!=='admin') db.ref('players/'+c.key).update({status:'countdown'}); }); });
         }
@@ -185,7 +208,6 @@
         function startAdminScore() {
             changeLayer('layer-scoreboard');
             if(!window.scoreSync) window.scoreSync = setInterval(() => updateScores('score-box'), 1000);
-            // เพิ่มปุ่มกลับเฉพาะแอดมินในหน้า Scoreboard
             const btn = document.createElement('button');
             btn.className = "btn btn-primary"; btn.innerText = "กลับหน้าแอดมิน";
             btn.onclick = () => { clearInterval(window.scoreSync); window.scoreSync=null; changeLayer('layer-admin'); btn.remove(); };
@@ -202,24 +224,13 @@
                     h += `<div style="display:flex; justify-content:space-between; margin-bottom:8px; border-bottom:1px solid #eee; padding:5px;">
                         <span>${p.name}</span>
                         <div>
-                            <button onclick="giveHint('${p.name}', '${p.status}')" style="background:#FFD93D; padding:5px; border-radius:8px;">⚡</button>
+                            <button onclick="db.ref('players/${p.name}').update({hint:true})" style="background:#FFD93D; padding:5px; border-radius:8px;">⚡</button>
                             <button onclick="db.ref('players/${p.name}').update({banned:${!p.banned}})" style="background:${p.banned?'#00D2BE':'#FF6B6B'}; color:white; padding:5px; border-radius:8px; margin-left:5px;">${p.banned?'ปลด':'แบน'}</button>
                         </div>
                     </div>`;
                 });
                 document.getElementById('manage-box').innerHTML = h;
             });
-        }
-
-        function giveHint(name, status) {
-            const fb = document.getElementById('admin-notif');
-            if(status === 'playing') {
-                db.ref('players/'+name).update({hint: true});
-                fb.innerHTML = "✅"; fb.style.display = "flex"; fb.style.color = "green";
-            } else {
-                fb.innerHTML = "❌"; fb.style.display = "flex"; fb.style.color = "red";
-            }
-            setTimeout(() => fb.style.display = "none", 1000);
         }
 
         function updateLobby() {
@@ -231,14 +242,14 @@
 
         function updateScores(containerId) {
             db.ref('players').once('value', s => {
-                let list = []; s.forEach(c => { if(c.val().finishTime) list.push(c.val()); });
-                list.sort((a,b) => (a.finishTime-a.startTime) - (b.finishTime-b.startTime));
-                let h = ""; list.forEach((p,i) => h += `<div style="padding:10px; border-bottom:1px solid #ddd;">${i+1}. <b>${p.name}</b> - ${((p.finishTime-p.startTime)/1000).toFixed(2)}s</div>`);
-                document.getElementById(containerId).innerHTML = h || "กำลังรอผู้ชนะ...";
+                let list = []; s.forEach(c => { if(c.val().timeUsed) list.push(c.val()); });
+                list.sort((a,b) => a.timeUsed - b.timeUsed);
+                let h = ""; list.forEach((p,i) => h += `<div style="padding:10px; border-bottom:1px solid #ddd; display:flex; justify-content:space-between;"><span>${i+1}. <b>${p.name}</b></span> <span style="color:var(--primary)">${p.timeUsed.toFixed(2)}s</span></div>`);
+                document.getElementById(containerId).innerHTML = h || "กำลังประมวลผลอันดับ...";
             });
         }
 
-        function openAdminAuth() { if(prompt("รหัส:") === "182137") { myName="admin"; changeLayer('layer-admin'); } }
+        function openAdminAuth() { if(prompt("รหัสแอดมิน:") === "182137") { myName="admin"; changeLayer('layer-admin'); } }
     </script>
 </body>
 </html>
