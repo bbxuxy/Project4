@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MATH CODE M.1 - INFINITE LOOP</title>
+    <title>MATH CODE M.1 - MULTI GAME EDITION</title>
     <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-database-compat.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -29,7 +29,11 @@
         .key { background: #F8FAFC; padding: 18px; font-size: 1.5rem; font-weight: 600; box-shadow: 0 4px 0 #CBD5E1; border-radius: 20px; }
         
         .list-box { text-align: left; max-height: 280px; overflow-y: auto; margin: 15px 0; padding: 10px; border-radius: 20px; background: #F8FAFC; border: 1px solid #E2E8F0; }
-        #layer-banned { background: #FF0000 !important; color: white; z-index: 9999 !important; }
+        
+        /* Sudoku Grid Styling */
+        .sudoku-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; margin: 10px auto; width: 180px; }
+        .sudoku-cell { width: 40px; height: 40px; border: 1px solid #ccc; display: flex; align-items: center; justify-content: center; font-weight: bold; background: white; border-radius: 5px; }
+        .cell-empty { background: #FFF9C4; color: #E65100; border: 2px solid #FFB300; }
     </style>
 </head>
 <body>
@@ -47,25 +51,25 @@
                 4. ด.ญ.ชนิสรา ชะเอม เลขที่ 15<br>
                 5. ด.ญ.วิภาดา ธรรมเจริญ เลขที่ 26
             </div>
-            <button class="btn btn-primary" onclick="changeLayer('layer-lock')">เข้าสู่สนามสอบ</button>
+            <button class="btn btn-primary" onclick="changeLayer('layer-lock')">เริ่มการแข่ง</button>
         </div>
     </div>
 
     <div id="layer-lock" class="page-layer">
-        <div class="card"><h2>ลงชื่อผู้แข่งขัน</h2><input type="text" id="p-name" placeholder="ชื่อเล่น"><button class="btn btn-primary" onclick="registerPlayer()">ยืนยันข้อมูล</button></div>
+        <div class="card"><h2>ชื่อของคุณ</h2><input type="text" id="p-name" placeholder="ชื่อเล่น"><button class="btn btn-primary" onclick="registerPlayer()">ลงทะเบียน</button></div>
     </div>
 
     <div id="layer-lobby" class="page-layer">
-        <div class="card"><h3>⏳ สถานะ: รอแอดมินปล่อยตัว</h3><div id="lobby-list" class="list-box"></div></div>
+        <div class="card"><h3>⏳ รอแอดมินปล่อยตัว...</h3><div id="lobby-list" class="list-box"></div></div>
     </div>
 
     <div id="layer-countdown" class="page-layer" style="background:white;"><div style="font-size:10rem; color:var(--primary); font-weight:800;" id="cd-text">5</div></div>
 
     <div id="layer-game-math" class="page-layer">
         <div class="card">
+            <div id="game-title" style="font-weight:600; color:var(--primary);"></div>
             <div id="live-timer">0.00s</div>
-            <div id="feedback-correct" style="display:none; color:#00D2BE; font-size:4rem; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); z-index:100;">✅</div>
-            <div id="quest-area" style="background:#F0FDFA; padding:15px; border-radius:25px; border:2px dashed var(--primary); margin-bottom:10px; font-size: 0.95rem; text-align: left;"></div>
+            <div id="quest-area" style="background:#F0FDFA; padding:15px; border-radius:25px; border:2px dashed var(--primary); margin-bottom:10px;"></div>
             <div id="code-display" style="font-size:3rem; color:var(--primary); font-weight:800; letter-spacing:10px;">____</div>
             <div class="keypad">
                 <button class="key" onclick="press('1')">1</button><button class="key" onclick="press('2')">2</button><button class="key" onclick="press('3')">3</button>
@@ -78,35 +82,35 @@
 
     <div id="layer-scoreboard" class="page-layer">
         <div class="card">
-            <h2 style="color:var(--primary)">🏆 ลำดับคะแนนเรียลไทม์</h2>
+            <h2 style="color:var(--primary)">🏆 ลำดับคะแนน</h2>
             <div id="score-box" class="list-box" style="max-height:350px;"></div>
-            <p style="font-size:0.75rem; color:gray;">(รอแอดมินสั่งเริ่มเกมใหม่ในหน้านี้)</p>
+            <p style="font-size:0.75rem; color:gray;">(รอเริ่มเกมถัดไป...)</p>
         </div>
     </div>
 
     <div id="layer-admin" class="page-layer">
         <div class="card">
-            <h2>⚙️ แผงควบคุมระบบ</h2>
+            <h2>⚙️ ADMIN CONTROL</h2>
             <div style="display:flex; gap:10px; margin-bottom:10px;">
-                <button class="btn btn-primary" onclick="adminStartGame('math')">เริ่มเกมสมการ</button>
-                <button class="btn btn-primary" style="background:#9F7AEA" onclick="adminStartGame('sudoku')">เริ่มเกม SUDOKU</button>
+                <button class="btn btn-primary" onclick="adminStartGame('math')">เริ่มสมการ</button>
+                <button class="btn btn-primary" style="background:#9F7AEA" onclick="adminStartGame('sudoku')">เริ่ม SUDOKU</button>
             </div>
-            <button class="btn btn-primary" style="background:#6366F1" onclick="viewLeaderboard()">📊 ดูคะแนนปัจจุบัน (1s)</button>
-            <button class="btn btn-primary" style="background:black" onclick="loadAdminManage()">จัดการผู้เล่น/ปลดแบน</button>
-            <button class="btn btn-primary" style="background:gray" onclick="location.reload()">Reset ล้างกระดาน</button>
+            <button class="btn btn-primary" style="background:#6366F1" onclick="viewLeaderboard()">📊 ดูอันดับสด</button>
+            <button class="btn btn-primary" style="background:black" onclick="loadAdminManage()">จัดการผู้เล่น & แบน</button>
+            <button class="btn btn-primary" style="background:gray" onclick="location.reload()">Reset ใหม่</button>
         </div>
     </div>
 
-    <div id="layer-manage" class="page-layer"><div class="card"><h3>👥 จัดการผู้แข่งขัน</h3><div id="manage-box" class="list-box"></div><button class="btn btn-primary" onclick="changeLayer('layer-admin')">กลับ</button></div></div>
-    <div id="layer-banned" class="page-layer"><div class="card"><h1 style="color:red; font-size:5rem;">⛔</h1><h2 style="color:red">ถูกระงับสิทธิ์ชั่วคราว</h2></div></div>
+    <div id="layer-manage" class="page-layer"><div class="card"><h3>👥 รายชื่อผู้แข่ง</h3><div id="manage-box" class="list-box"></div><button class="btn btn-primary" onclick="changeLayer('layer-admin')">กลับ</button></div></div>
+    <div id="layer-banned" class="page-layer" style="background:red;"><div class="card"><h1>⛔</h1><h2>คุณถูกระงับสิทธิ์</h2></div></div>
 
     <script>
         const firebaseConfig = { apiKey: "AIzaSyDJf-qOOB_hmP1higooEpMSFe2768dMxfE", databaseURL: "https://mathpasswordgame2-default-rtdb.asia-southeast1.firebasedatabase.app/" };
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        let myName = "", currentCode = "", targetAns = "", isBanned = false;
-        let startTime = 0, timerInterval = null, lastGameId = "";
+        let myName = "", currentCode = "", targetAns = "", lastGameId = "", currentGameType = "";
+        let startTime = 0, timerInterval = null;
 
         function changeLayer(id) {
             document.querySelectorAll('.page-layer').forEach(l => l.classList.remove('active-layer'));
@@ -116,32 +120,26 @@
         function registerPlayer() {
             myName = document.getElementById('p-name').value.trim();
             if(!myName) return;
-            db.ref('players/'+myName).set({ name: myName, status: 'ready', banned: false, hint: false, timeUsed: 0, gameId: "" });
+            db.ref('players/'+myName).set({ name: myName, status: 'ready', banned: false, hint: false, timeUsed: 0, gameId: "", gameType: "" });
             changeLayer('layer-lobby');
             setInterval(updateLobby, 1000);
             
-            // Real-time Listener (วนลูปเกม)
             db.ref('players/'+myName).on('value', s => {
                 const p = s.val(); if(!p) return;
+                if(p.banned) changeLayer('layer-banned');
                 
-                // 1. ระบบแบน
-                if(p.banned) { isBanned=true; changeLayer('layer-banned'); }
-                else if(!p.banned && isBanned) { isBanned=false; changeLayer('layer-lobby'); }
-
-                // 2. ระบบเริ่มเกมใหม่ (ตรวจจับ gameId ที่เปลี่ยนไป)
                 if(p.status === 'countdown' && p.gameId !== lastGameId) {
                     lastGameId = p.gameId;
+                    currentGameType = p.gameType;
                     stopTimer();
                     startCountdown();
                 }
 
-                // 3. ระบบเฉลยแบบจับเวลาจริง
                 if(p.hint && p.status === 'playing') {
                     const nowTime = (Date.now() - startTime) / 1000;
                     db.ref('players/'+myName).update({hint: false, status: 'finished', timeUsed: nowTime});
                 }
 
-                // 4. หน้าจบเกม (ล็อคและอัปเดต)
                 if(p.status === 'finished') {
                     stopTimer(); 
                     changeLayer('layer-scoreboard');
@@ -158,7 +156,7 @@
                 c--; document.getElementById('cd-text').innerText = c;
                 if(c <= 0) { 
                     clearInterval(i); 
-                    generateM1Equations(); 
+                    if(currentGameType === 'math') generateMath(); else generateSudoku();
                     changeLayer('layer-game-math'); 
                     startTime = Date.now();
                     startTimer();
@@ -168,27 +166,54 @@
         }
 
         function startTimer() {
-            clearInterval(timerInterval);
             timerInterval = setInterval(() => {
-                const diff = (Date.now() - startTime) / 1000;
-                document.getElementById('live-timer').innerText = diff.toFixed(2) + "s";
+                document.getElementById('live-timer').innerText = ((Date.now() - startTime) / 1000).toFixed(2) + "s";
             }, 50);
         }
-
         function stopTimer() { clearInterval(timerInterval); }
 
-        function generateM1Equations() {
+        // --- โจทย์สมการ ม.1 ---
+        function generateMath() {
+            document.getElementById('game-title').innerText = "เกมสมการเชิงเส้นตัวแปรเดียว";
             let res = ""; let html = "";
             ['a','b','c','d'].forEach(v => {
                 const ans = Math.floor(Math.random()*10); res += ans;
                 const a = Math.floor(Math.random()*4)+2;
                 const b = Math.floor(Math.random()*10)+1;
-                html += `<div>${v.toUpperCase()}: ${a}x + ${b} = ${a*ans+b}</div>`;
+                html += `<div style="text-align:left; font-size:1.1rem; margin:5px 0;">${v.toUpperCase()}: ${a}x + ${b} = ${a*ans+b}</div>`;
             });
-            targetAns = res;
-            currentCode = ""; 
-            document.getElementById('code-display').innerText = "____";
-            document.getElementById('quest-area').innerHTML = html + "<small>จงหารหัสผ่านจากตัวแปร a b c d</small>";
+            targetAns = res; currentCode = ""; document.getElementById('code-display').innerText = "____";
+            document.getElementById('quest-area').innerHTML = html;
+        }
+
+        // --- โจทย์ Sudoku 4x4 ---
+        function generateSudoku() {
+            document.getElementById('game-title').innerText = "SUDOKU MINI (เติมเลข 1-4)";
+            const base = [
+                [1,2,3,4], [3,4,1,2],
+                [2,3,4,1], [4,1,2,3]
+            ];
+            // สุ่มสลับแถวเล็กน้อยเพื่อให้โจทย์ไม่ซ้ำ
+            const grid = base.sort(() => Math.random() - 0.5);
+            let res = ""; 
+            let html = `<div class="sudoku-grid">`;
+            
+            // สุ่มตำแหน่งที่จะหายไป 4 จุด (จุดละ 1 หลักในรหัสผ่าน)
+            let blanks = [[0,0], [1,2], [2,1], [3,3]].sort(() => Math.random() - 0.5);
+            
+            for(let r=0; r<4; r++) {
+                for(let c=0; c<4; c++) {
+                    let isBlank = blanks.find(b => b[0]===r && b[1]===c);
+                    if(isBlank) {
+                        html += `<div class="sudoku-cell cell-empty">?</div>`;
+                        res += grid[r][c];
+                    } else {
+                        html += `<div class="sudoku-cell">${grid[r][c]}</div>`;
+                    }
+                }
+            }
+            targetAns = res; currentCode = ""; document.getElementById('code-display').innerText = "____";
+            document.getElementById('quest-area').innerHTML = html + "</div><small>นำตัวเลขในช่อง ? มาเรียงกัน</small>";
         }
 
         function press(k) {
@@ -199,30 +224,18 @@
 
         function checkAns() {
             if(currentCode === targetAns) {
-                const finalTime = (Date.now() - startTime) / 1000;
-                document.getElementById('feedback-correct').style.display='block';
-                setTimeout(() => {
-                    document.getElementById('feedback-correct').style.display='none';
-                    db.ref('players/'+myName).update({status:'finished', timeUsed: finalTime});
-                }, 800);
+                db.ref('players/'+myName).update({status:'finished', timeUsed: (Date.now() - startTime)/1000});
             } else {
                 alert("รหัสไม่ถูกต้อง!"); currentCode=""; press('');
             }
         }
 
-        // --- ADMIN FUNCTIONS ---
+        // --- ADMIN ---
         function adminStartGame(type) {
-            const newGameId = "G_" + Date.now();
+            const gid = "G_" + Date.now();
             db.ref('players').once('value', s => {
                 s.forEach(c => {
-                    if(c.key !== 'admin') {
-                        db.ref('players/'+c.key).update({
-                            status: 'countdown',
-                            gameId: newGameId,
-                            timeUsed: 0,
-                            hint: false
-                        });
-                    }
+                    if(c.key !== 'admin') db.ref('players/'+c.key).update({status:'countdown', gameId:gid, gameType:type, timeUsed:0, hint:false});
                 });
             });
         }
@@ -231,7 +244,7 @@
             changeLayer('layer-scoreboard');
             if(!window.scoreSync) window.scoreSync = setInterval(() => updateScores('score-box'), 1000);
             const btn = document.createElement('button');
-            btn.className = "btn btn-primary"; btn.id="back-admin-btn"; btn.innerText = "กลับแผงควบคุม";
+            btn.className = "btn btn-primary"; btn.innerText = "กลับแอดมิน";
             btn.onclick = () => { changeLayer('layer-admin'); btn.remove(); };
             document.querySelector('#layer-scoreboard .card').appendChild(btn);
         }
@@ -241,13 +254,12 @@
             db.ref('players').on('value', s => {
                 let h = "";
                 s.forEach(c => {
-                    if(c.key === 'admin') return;
-                    let p = c.val();
+                    if(c.key==='admin') return;
                     h += `<div style="display:flex; justify-content:space-between; margin-bottom:8px; border-bottom:1px solid #eee; padding:5px;">
-                        <span>${p.name}</span>
+                        <span>${c.val().name}</span>
                         <div>
-                            <button onclick="db.ref('players/${p.name}').update({hint:true})" style="background:#FFD93D; padding:5px; border-radius:8px;">⚡</button>
-                            <button onclick="db.ref('players/${p.name}').update({banned:${!p.banned}})" style="background:${p.banned?'#00D2BE':'#FF6B6B'}; color:white; padding:5px; border-radius:8px; margin-left:5px;">${p.banned?'ปลด':'แบน'}</button>
+                            <button onclick="db.ref('players/${c.key}').update({hint:true})" style="background:#FFD93D; padding:5px; border-radius:8px;">⚡</button>
+                            <button onclick="db.ref('players/${c.key}').update({banned:${!c.val().banned}})" style="background:${c.val().banned?'#00D2BE':'#FF6B6B'}; color:white; padding:5px; border-radius:8px; margin-left:5px;">${c.val().banned?'ปลด':'แบน'}</button>
                         </div>
                     </div>`;
                 });
@@ -257,21 +269,21 @@
 
         function updateLobby() {
             db.ref('players').once('value', s => {
-                let h = ""; s.forEach(c => { if(c.key!=='admin' && c.val().status !== 'finished') h+=`<div>🟢 ${c.val().name}</div>`; });
-                document.getElementById('lobby-list').innerHTML = h || "กำลังรอผู้เข้าแข่งขัน...";
+                let h = ""; s.forEach(c => { if(c.key!=='admin') h+=`<div>🟢 ${c.val().name}</div>`; });
+                document.getElementById('lobby-list').innerHTML = h;
             });
         }
 
         function updateScores(containerId) {
             db.ref('players').once('value', s => {
-                let list = []; s.forEach(c => { if(c.val().status === 'finished' && c.val().timeUsed > 0) list.push(c.val()); });
+                let list = []; s.forEach(c => { if(c.val().status==='finished') list.push(c.val()); });
                 list.sort((a,b) => a.timeUsed - b.timeUsed);
-                let h = ""; list.forEach((p,i) => h += `<div style="padding:10px; border-bottom:1px solid #ddd; display:flex; justify-content:space-between;"><span>${i+1}. <b>${p.name}</b></span> <span style="color:var(--primary)">${p.timeUsed.toFixed(2)}s</span></div>`);
-                document.getElementById(containerId).innerHTML = h || "ยังไม่มีสถิติในรอบนี้...";
+                let h = ""; list.forEach((p,i) => h += `<div style="padding:10px; border-bottom:1px solid #ddd; display:flex; justify-content:space-between;"><span>${i+1}. <b>${p.name}</b></span> <span>${p.timeUsed.toFixed(2)}s</span></div>`);
+                document.getElementById(containerId).innerHTML = h || "กำลังรอผล...";
             });
         }
 
-        function openAdminAuth() { if(prompt("รหัสผ่าน:") === "182137") { myName="admin"; changeLayer('layer-admin'); } }
+        function openAdminAuth() { if(prompt("รหัส:") === "182137") { myName="admin"; changeLayer('layer-admin'); } }
     </script>
 </body>
 </html>
