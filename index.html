@@ -127,6 +127,48 @@
             db.ref('players/'+myName).on('value', s => {
                 const p = s.val(); if(!p) return;
                 if(p.banned) changeLayer('layer-banned');
+        function registerPlayer() {
+            myName = document.getElementById('p-name').value.trim();
+            if(!myName) return;
+            db.ref('players/'+myName).set({ name: myName, status: 'ready', banned: false, hint: false, timeUsed: 0, gameId: "", gameType: "" });
+            changeLayer('layer-lobby');
+            setInterval(updateLobby, 1000);
+            
+            db.ref('players/'+myName).on('value', s => {
+                const p = s.val(); 
+
+                // --- จุดที่ 2: ถ้าโดนลบชื่อ (p เป็น null) ให้ดีดกลับหน้าแรกทันที ---
+                if(!p && myName !== "admin") {
+                    location.reload();
+                    return;
+                }
+                // -------------------------------------------------------
+
+                if(!p) return; 
+                if(p.banned) changeLayer('layer-banned');
+                
+                if(p.status === 'countdown' && p.gameId !== lastGameId) {
+                    lastGameId = p.gameId;
+                    currentGameType = p.gameType;
+                    stopTimer();
+                    startCountdown();
+                }
+
+                if(p.hint && p.status === 'playing') {
+                    const nowTime = (Date.now() - startTime) / 1000;
+                    db.ref('players/'+myName).update({hint: false, status: 'finished', timeUsed: nowTime});
+                }
+
+                if(p.status === 'finished') {
+                    stopTimer(); 
+                    changeLayer('layer-scoreboard');
+                    if(!window.scoreSync) window.scoreSync = setInterval(() => updateScores('score-box'), 1000);
+                }
+            });
+            }
+
+
+
                 
                 if(p.status === 'countdown' && p.gameId !== lastGameId) {
                     lastGameId = p.gameId;
@@ -257,6 +299,27 @@
                     if(c.key==='admin') return;
                     h += `<div style="display:flex; justify-content:space-between; margin-bottom:8px; border-bottom:1px solid #eee; padding:5px;">
                         <span>${c.val().name}</span>
+                        
+            h += `<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; border-bottom:1px solid #eee; padding:5px;">
+                <span>${p.name}</span>
+                <div>
+                    <button onclick="db.ref('players/${c.key}').update({hint:true})" style="background:#FFD93D; border:none; padding:5px 10px; border-radius:8px;">⚡</button>
+                    <button onclick="db.ref('players/${c.key}').update({banned:${!p.banned}})" style="background:${p.banned?'#00D2BE':'#FF6B6B'}; color:white; border:none; padding:5px 10px; border-radius:8px; margin-left:5px;">${p.banned?'ปลด':'แบน'}</button>
+                    <button onclick="deletePlayer('${c.key}')" style="background:#000; color:white; border:none; padding:5px 10px; border-radius:8px; margin-left:5px;">❌</button>
+                </div>
+            </div>`;
+        });
+        document.getElementById('manage-box').innerHTML = h;
+    });
+}
+
+// และวางฟังก์ชันนี้ต่อท้ายไว้ด้วยกันเลยครับ
+function deletePlayer(pKey) {
+    if(confirm(`ยืนยันที่จะลบคุณ ${pKey} ออกจากระบบ?`)) {
+        db.ref('players/' + pKey).remove();
+    }
+                        }
+                          
                         <div>
                             <button onclick="db.ref('players/${c.key}').update({hint:true})" style="background:#FFD93D; padding:5px; border-radius:8px;">⚡</button>
                             <button onclick="db.ref('players/${c.key}').update({banned:${!c.val().banned}})" style="background:${c.val().banned?'#00D2BE':'#FF6B6B'}; color:white; padding:5px; border-radius:8px; margin-left:5px;">${c.val().banned?'ปลด':'แบน'}</button>
